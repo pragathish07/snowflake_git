@@ -32,7 +32,11 @@ jobs:
           SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
           PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
-          echo "$PRIVATE_KEY" > rsa_key.pem
+          # Use a heredoc to perfectly preserve the key's formatting and newlines
+          cat << 'EOF' > rsa_key.pem
+          ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+          EOF
+          
           chmod 600 rsa_key.pem
           
           snowsql \
