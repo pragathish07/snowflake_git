@@ -30,13 +30,10 @@ jobs:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+          BASE64_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
-          # Use a heredoc to perfectly preserve the key's formatting and newlines
-          cat << 'EOF' > rsa_key.pem
-          ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
-          EOF
-          
+          # Safe decoding that perfectly reconstructs your PKCS#8 structural file
+          echo "$BASE64_PRIVATE_KEY" | base64 --decode > rsa_key.pem
           chmod 600 rsa_key.pem
           
           snowsql \
